@@ -78,3 +78,18 @@ jobs:
           format: table
           exit-code: 1
           severity: CRITICAL,HIGH
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [docker]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.0
+      - name: Deploy to Kubernetes
+        run: |
+          echo "Deploying to cluster..."
+          kubectl apply -f k8s/
