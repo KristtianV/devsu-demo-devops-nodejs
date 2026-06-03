@@ -1,9 +1,11 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import sequelize from './shared/database/database.js'
 import { usersRouter } from "./users/router.js"
 import express from 'express'
 
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 8000
 
 //sequelize.sync({ force: true }).then(() => console.log('db is ready'))
 sequelize.sync().then(() => console.log('db is ready'))
