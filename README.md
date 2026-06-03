@@ -1,19 +1,28 @@
-# Demo Devops NodeJs
+# Demo DevOps NodeJS
 
-This is a simple application to be used in the technical test of DevOps.
+This project is a REST API built in Node.js used as a technical assessment for DevOps practices.
+
+It has been extended to include a full CI/CD pipeline, Dockerization, Kubernetes deployment, and security scanning.
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18.15.0
+- Node.js 18.15.0 or higher
+- Docker
+- Kubernetes (Minikube or Docker Desktop Kubernetes)
+- Git
+
+---
 
 ### Installation
 
-Clone this repo.
+Clone this repo:
 
 ```bash
-git clone https://bitbucket.org/devsu/demo-devops-nodejs.git
+git clone https://github.com/<your-repo>/devsu-demo-devops-nodejs.git
 ```
 
 Install dependencies.
@@ -24,9 +33,11 @@ npm i
 
 ### Database
 
-The database is generated as a file in the main path when the project is first run, and its name is `dev.sqlite`.
-
-Consider giving access permissions to the file for proper functioning.
+The database is a local SQLite file generated automatically on first execution:
+```bash
+dev.sqlite
+```
+No external database is required.
 
 ## Usage
 
@@ -47,6 +58,27 @@ Open http://localhost:8000/api/users with your browser to see the result.
 ### Features
 
 These services can perform,
+
+#### Health Check (ADDED)
+
+A health endpoint was added for monitoring and Kubernetes probes.
+```bash
+GET /health
+```
+Response:
+
+```json
+{
+  "status": "UP"
+}
+```
+Used for:
+
+readiness/liveness probes in Kubernetes
+basic service monitoring
+load balancer health checks
+
+A health endpoint was added for monitoring and Kubernetes probes.
 
 #### Create User
 
@@ -136,6 +168,144 @@ If the response is unsuccessful, we will receive status 400 and the following me
     ]
 }
 ```
+
+# ------------------------------------------------------------
+
+# DEVOPS EXTENSIONS (ADDED BEYOND ORIGINAL REQUIREMENT)
+
+# ------------------------------------------------------------
+
+## CI/CD Pipeline
+
+A GitHub Actions pipeline was implemented to automate the software delivery lifecycle.
+
+Stages:
+
+* Code Build (npm ci)
+* Unit Tests (Jest)
+* Code Coverage
+* Static Code Analysis (lint placeholder)
+* Docker image build
+* Docker image push to registry
+* Vulnerability scanning (Trivy)
+* Kubernetes deployment (manifest execution)
+
+---
+
+## Testing (ADDED)
+
+Additional test cases were implemented to improve coverage and validate business logic.
+
+Added scenarios:
+
+* User not found (404)
+* Duplicate user creation (400)
+* Successful user creation
+* API response validation improvements
+
+Frameworks:
+
+* Jest
+* Supertest
+
+Execution:
+
+```bash
+npm run test
+```
+
+Coverage:
+
+```bash
+npx jest --coverage
+```
+
+---
+
+## Docker
+
+Application is containerized using Docker.
+
+Image published to Docker Hub:
+
+```
+kristtiandocker/devsu-demo
+```
+
+---
+
+## Kubernetes Deployment
+
+The application is deployed locally using Minikube / Docker Desktop Kubernetes.
+
+Resources:
+
+* Deployment (2 replicas)
+* Service (ClusterIP)
+* ConfigMap
+* Secret
+* Ingress (NGINX)
+
+Access:
+
+```
+http://devsu.local
+```
+
+Note:
+In local environments (Windows + Minikube), external ingress access may require port-forwarding or tunnel configuration.
+
+---
+
+## Security Scanning
+
+A vulnerability scan was integrated using Trivy in the CI/CD pipeline.
+
+It detects known CVEs in dependencies and container layers.
+
+Example finding:
+
+* validator@13.9.0 (CVE-2025-12758)
+
+This is reported as part of the security quality gate.
+
+---
+
+## Deployment Strategy
+
+The deployment stage is defined in the CI/CD pipeline.
+
+Due to local Kubernetes limitations, execution is validated using:
+
+```bash
+kubectl apply -f k8s/
+```
+
+or simulated in CI environments without cluster access.
+
+---
+
+## Architecture Overview
+
+```
+GitHub Repository
+        |
+        v
+GitHub Actions CI/CD
+        |
+        v
+Docker Image (Docker Hub)
+        |
+        v
+Kubernetes Cluster (Minikube)
+        |
+        +--> Deployment (2 replicas)
+        +--> Service
+        +--> Ingress
+```
+
+---
+
 
 ## License
 
