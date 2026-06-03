@@ -51,6 +51,22 @@ describe('User', () => {
         expect(response.body).toEqual({...data, "id": 1})
     })
 
+    test('User not found', async () => { //added
+        jest.spyOn(User, 'findByPk').mockResolvedValue(null)
+        const response = await request(app).get('/api/users/9999')
+
+        expect(response.status).toBe(404)
+        expect(response.body).toEqual({error: 'User not found: 9999'})
+    })
+
+    test('User already exists', async () => { //added
+        jest.spyOn(User, 'findOne').mockResolvedValue(data)
+        const response = await request(app).post('/api/users').send(data)
+
+        expect(response.status).toBe(400)
+        expect(response.body).toEqual({error: 'User already exists: ' + data.dni})
+    })
+
     test('Create user', async () => {
         jest.spyOn(User, 'findOne').mockResolvedValue(null)
         jest.spyOn(User, 'create').mockResolvedValue({...data, "id": 1})
